@@ -16,13 +16,9 @@ export async function bootstrap(
 
   const app = await NestFactory.create(AppModule);
 
-  if (options.prefix) {
-    app.setGlobalPrefix(options.prefix);
-  }
+  options.prefix && app.setGlobalPrefix(options.prefix);
 
-  if (enableCors) {
-    app.enableCors({ origin: true, credentials: true });
-  }
+  enableCors && app.enableCors({ origin: true, credentials: true });
 
   app.use(json({ limit: '100mb' }));
 
@@ -37,6 +33,7 @@ export async function bootstrap(
       }/docs`,
     );
   } else {
+    // TODO: 随机端口有无现成库 ？？
     await listenRandomPort(
       app,
       `port.${process.env.NODE_ENV || 'dev'}.json`,

@@ -21,6 +21,7 @@ export async function listenRandomPort(
     const json = data.toString();
     const { port } = JSON.parse(json);
     await app.listen(port);
+
     console.log(`App is listening at: http://localhost:${port}`);
     console.log(
       `Docs is listening at: http://localhost:${port}${prefix || ''}/docs`,
