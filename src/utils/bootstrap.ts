@@ -1,4 +1,5 @@
 import { NestFactory } from '@nestjs/core';
+import { ValidationPipe } from '@nestjs/common';
 import { json } from 'express';
 import { listenRandomPort } from './random-port';
 
@@ -12,15 +13,17 @@ export async function bootstrap(
     apiDocs: boolean;
   },
 ) {
-  const enableCors = options.enableCors ?? true;
+  // const enableCors = options.enableCors ?? true;
 
   const app = await NestFactory.create(AppModule);
 
   options.prefix && app.setGlobalPrefix(options.prefix);
 
-  enableCors && app.enableCors({ origin: true, credentials: true });
+  // enableCors && app.enableCors({ origin: true, credentials: true });
 
   app.use(json({ limit: '100mb' }));
+
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
 
   if (options.port) {
     await app.listen(options.port);
