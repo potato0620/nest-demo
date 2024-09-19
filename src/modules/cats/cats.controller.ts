@@ -7,9 +7,10 @@ import {
   Post,
   Put,
   Query,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { CatsService } from './cats.service';
-import { CreateCatDto } from './cats.dto';
+import { CreateCatDto } from './dto/cats.dto';
 
 @Controller('cats')
 export class CatsController {
@@ -17,15 +18,14 @@ export class CatsController {
 
   @Get()
   getAllCats(@Query() query: { name: string }): string[] {
-    console.log(query.name, 'queryName');
     const result = Array.from({ length: 100 }).map((_, i) => {
-      return `cats${query.name}: ${i}`;
+      return `cats-${query.name}: ${i}`;
     });
-    return [...result];
+    return result;
   }
 
   @Get(':id')
-  getOneCat(@Param('id') id: string): { name: string }[] {
+  getOneCat(@Param('id', ParseIntPipe) id: number): { name: string }[] {
     return [{ name: `cats: ${id}` }, { name: '嘻嘻嘻fuck you bro get' }];
   }
 
