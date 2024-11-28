@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
-export class CreateCatDto {
+class CreateCatDto {
   @IsNotEmpty({ message: 'name is required' })
   @IsString()
   name: string;
@@ -12,3 +12,11 @@ export class CreateCatDto {
   @IsNotEmpty({ message: 'breed is required' })
   breed: string;
 }
+
+class UpdateCatDto {
+  @IsNotEmpty({ message: 'name is required' })
+  @IsString()
+  name: string;
+}
+
+export { CreateCatDto, UpdateCatDto };

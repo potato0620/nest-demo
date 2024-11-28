@@ -6,34 +6,36 @@ import {
   Param,
   Post,
   Put,
-  Query,
   ParseIntPipe,
+  HttpCode,
+  Header,
 } from '@nestjs/common';
 import { CatsService } from './cats.service';
-import { CreateCatDto } from './dto/cats.dto';
+import { CreateCatDto, UpdateCatDto } from './dto/cats.dto';
+import { Cat } from './interface/interface';
 
-@Controller('cats')
+@Controller({
+  path: 'cats',
+})
 export class CatsController {
   constructor(private readonly catsService: CatsService) {}
 
   @Get()
-  getAllCats(@Query() query: { name: string }): string[] {
-    const result = Array.from({ length: 100 }).map((_, i) => {
-      return `cats-${query.name}: ${i}`;
-    });
-    return result;
+  // @Redirect('https://www.zhinan.tech', 301)
+  getAllCats(): Cat[] {
+    return this.catsService.findAllCats();
   }
 
   @Get(':id')
-  getOneCat(@Param('id', ParseIntPipe) id: number): { name: string }[] {
-    return [{ name: `cats: ${id}` }, { name: '嘻嘻嘻fuck you bro get' }];
+  getOneCat(@Param('id', ParseIntPipe) id: number): Cat {
+    return this.catsService.findCatById(id);
   }
 
   @Post()
-  createCat(@Body() payload: CreateCatDto): string {
-    console.log(payload, 'payload');
-
-    return 'create successfully';
+  @Header('Cache-Control', 'no-store')
+  @HttpCode(200)
+  createCat(@Body() payload: CreateCatDto): Cat {
+    return this.catsService.create(payload);
   }
 
   @Delete()
@@ -41,8 +43,11 @@ export class CatsController {
     return `delete successfully: ${id}`;
   }
 
-  @Put()
-  updateCat(@Body() payload: CreateCatDto): string {
-    return `update successfully: ${payload.name}`;
+  @Put(':id')
+  updateCat(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() payload: UpdateCatDto,
+  ): string {
+    return this.catsService.updateCat(payload, id);
   }
 }

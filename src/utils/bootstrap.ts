@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { json } from 'express';
 import { listenRandomPort } from './random-port';
+import { TestMiddleware } from '~/middleware/test.middelware';
 
 export async function bootstrap(
   AppModule: any,
@@ -12,7 +13,7 @@ export async function bootstrap(
     port?: string;
     apiDocs: boolean;
   },
-) {
+): Promise<void> {
   // const enableCors = options.enableCors ?? true;
 
   const app = await NestFactory.create(AppModule);
@@ -24,6 +25,8 @@ export async function bootstrap(
   app.use(json({ limit: '100mb' }));
 
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
+
+  app.use(TestMiddleware); // 在app.use中只能使用函数中间件
 
   if (options.port) {
     await app.listen(options.port);
