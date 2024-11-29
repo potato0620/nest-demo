@@ -1,4 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  Injectable,
+  HttpStatus,
+  MethodNotAllowedException,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateCatDto, UpdateCatDto } from './dto/cats.dto';
 import { Cat } from './interface/interface';
 
@@ -29,11 +35,12 @@ export class CatsService {
   }
 
   public findAllCats(): Cat[] {
+    // throw new MethodNotAllowedException();
     return this.cats;
   }
 
-  public findCatById(id: number): Cat {
-    return this.cats.filter((cat) => cat.id === id)[0] || null;
+  public findCatById(id: number): Cat | Record<string, never> {
+    return this.cats.filter((cat) => cat.id === id)[0] || {};
   }
 
   public create(payload: CreateCatDto): Cat {

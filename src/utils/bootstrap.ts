@@ -1,11 +1,13 @@
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe, Type } from '@nestjs/common';
 import { json } from 'express';
 import { listenRandomPort } from './random-port';
 import { TestMiddleware } from '~/middleware/test.middelware';
+import { HttpExceptionFilter } from './http-exception.filter';
+import { RolesGuard } from '~/utils/roles.guard';
 
 export async function bootstrap(
-  AppModule: any,
+  AppModule: Type<any>,
   options: {
     enableCors?: boolean;
     prefix?: string;
@@ -26,7 +28,9 @@ export async function bootstrap(
 
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
 
-  app.use(TestMiddleware); // 在app.use中只能使用函数中间件
+  // app.use(TestMiddleware); // 在app.use中只能使用函数中间件
+  // app.useGlobalFilters(new HttpExceptionFilter()); // 全局注册 自定义异常处理
+  // app.useGlobalGuards(new RolesGuard()); // 全局注册 身份验证
 
   if (options.port) {
     await app.listen(options.port);
