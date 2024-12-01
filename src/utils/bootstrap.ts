@@ -5,6 +5,7 @@ import { listenRandomPort } from './random-port';
 import { TestMiddleware } from '~/middleware/test.middelware';
 import { HttpExceptionFilter } from './http-exception.filter';
 import { RolesGuard } from '~/utils/roles.guard';
+import { LoggingInterceptor } from '~/utils/logging.interceptor';
 
 export async function bootstrap(
   AppModule: Type<any>,
@@ -31,6 +32,7 @@ export async function bootstrap(
   // app.use(TestMiddleware); // 在app.use中只能使用函数中间件
   // app.useGlobalFilters(new HttpExceptionFilter()); // 全局注册 自定义异常处理
   // app.useGlobalGuards(new RolesGuard()); // 全局注册 身份验证
+  // app.useGlobalInterceptors(new LoggingInterceptor()); // 全局注册 拦截器
 
   if (options.port) {
     await app.listen(options.port);

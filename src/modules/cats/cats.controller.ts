@@ -12,6 +12,7 @@ import {
   UseFilters,
   HttpStatus,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { CatsService } from './cats.service';
 import { CreateCatDto, UpdateCatDto } from './dto/cats.dto';
@@ -19,31 +20,52 @@ import { Cat } from './interface/interface';
 import { HttpExceptionFilter } from '~/utils/http-exception.filter';
 import { ValidationPipe } from '~/utils/validation.pipe';
 import { RolesGuard } from '~/utils/roles.guard';
+import {
+  LoggingInterceptor,
+  TransformInterceptor,
+  CacheInterceptor,
+  TimeoutInterceptor,
+} from '~/utils/interceptors/index';
+
+import { CustomDecorator } from '~/utils/custom.decorator';
 
 @Controller({
   path: 'cats',
 })
 // @UseFilters(new HttpExceptionFilter()) // 可以把异常过滤器放在这里
 // @UseGuards(RolesGuard, RolesGuard) // 支持多个
+// @UseInterceptors(LoggingInterceptor) // 支持多个
 export class CatsController {
   constructor(private readonly catsService: CatsService) {}
 
   @Get()
   // @Redirect('https://www.zhinan.tech', 301)
   // @UseFilters(new HttpExceptionFilter()) // 也可以放这
-  getAllCats(): Cat[] {
-    return this.catsService.findAllCats();
+  // @UseGuards(RolesGuard, RolesGuard) // 支持多个
+  @UseInterceptors(
+    LoggingInterceptor,
+    TransformInterceptor,
+    CacheInterceptor,
+    TimeoutInterceptor,
+  )
+  async getAllCats(): Promise<Cat[]> {
+    return await new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(this.catsService.findAllCats());
+      }, 5000);
+    });
   }
 
   @Get(':id')
   getOneCat(
-    @Param(
-      'id',
-      new ParseIntPipe({
-        // 可以自定义状态码
-        errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE,
-      }),
-    )
+    // @Param(
+    //   'id',
+    //   new ParseIntPipe({
+    //     // 可以自定义状态码
+    //     errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE,
+    //   }),
+    // )
+    @CustomDecorator('id')
     id: number,
   ): Cat | Record<string, never> {
     return this.catsService.findCatById(id);
