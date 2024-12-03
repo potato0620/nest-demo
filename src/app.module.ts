@@ -2,9 +2,8 @@ import { Module, MiddlewareConsumer, RequestMethod } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import { CatsModule } from '~/modules/cats/cats.module';
 import { PotatoModule } from '~/modules/potato/potato.module';
-import { LoginVerify } from '~/middleware/login.middleware';
-import { TestMiddleware } from '~/middleware/test.middelware';
-import { RolesGuard } from '~/utils/roles.guard';
+import { LoginVerify } from '~/common/middleware/login.middleware';
+import { RolesGuard } from '~/common/guards/roles.guard';
 
 @Module({
   imports: [CatsModule, PotatoModule],

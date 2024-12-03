@@ -1,9 +1,9 @@
 import { Module, Scope } from '@nestjs/common';
 import { Global } from '@nestjs/common';
-import { CatsService } from './cats.service';
+import { CatsService } from './cats.service.js';
 import { CatsController } from './cats.controller';
 import { ValueTest, POTATO } from '~/common';
-import { ConfigModule } from '~/utils/customModule/config.dynamic.module';
+import { ConfigModule } from '~/common/customModule/config.dynamic.module';
 
 @Global() // 全局注册
 @Module({
@@ -34,7 +34,7 @@ import { ConfigModule } from '~/utils/customModule/config.dynamic.module';
       useFactory: async (...args): Promise<string> => {
         console.log('args================', args);
         return await new Promise(
-          (resolve) => setTimeout(() => resolve('get it'), 3000), // 异步注入依赖
+          (resolve) => setTimeout(() => resolve('get it'), 100), // 异步注入依赖
         );
       },
       inject: ['POTATO'], // 注入Factory的参数

@@ -3,7 +3,7 @@ import { ValidationPipe, Type } from '@nestjs/common';
 import { json } from 'express';
 import { TestMiddleware } from '~/middleware/test.middelware';
 import { HttpExceptionFilter } from './http-exception.filter';
-import { RolesGuard } from '~/utils/roles.guard';
+import { RolesGuard } from '~/common/guards/roles.guard';
 import { LoggingInterceptor } from '~/utils/logging.interceptor';
 import { listenRandomPort } from './random-port';
 import os from 'os';

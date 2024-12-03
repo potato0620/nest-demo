@@ -7,7 +7,7 @@ import {
   Scope,
 } from '@nestjs/common';
 import { CreateCatDto, UpdateCatDto } from './dto/cats.dto';
-import { Cat } from './interface/interface';
+import { Cat } from './interfaces/cat.interface';
 import { ModuleRef } from '@nestjs/core';
 
 @Injectable({
@@ -21,10 +21,7 @@ export class CatsService {
   }
 
   private initCats(): void {
-    console.log(
-      'catService: ',
-      this.moduleRef.get('CatsService', { strict: false }),
-    );
+    console.log('catService: ');
   }
 
   public findAllCats(): Cat[] {

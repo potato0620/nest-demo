@@ -20,18 +20,18 @@ import {
 } from '@nestjs/common';
 import { CatsService } from './cats.service';
 import { CreateCatDto, UpdateCatDto } from './dto/cats.dto';
-import { Cat } from './interface/interface';
+import { Cat } from './interfaces/cat.interface';
 import { HttpExceptionFilter } from '~/utils/http-exception.filter';
-import { ValidationPipe } from '~/utils/validation.pipe';
-import { RolesGuard } from '~/utils/roles.guard';
+import { ValidationPipe } from '~/common/pipes/validation.pipe';
+import { RolesGuard } from '~/common/guards/roles.guard';
 import {
   LoggingInterceptor,
   TransformInterceptor,
   CacheInterceptor,
   TimeoutInterceptor,
-} from '~/utils/interceptors/index';
+} from '~/common/interceptors';
 
-import { CustomDecorator } from '~/utils/custom.decorator';
+import { CustomDecorator } from '~/common/decorators/custom.decorator';
 import { Reflector } from '@nestjs/core';
 
 // import { ValueTest } from '~/common';
