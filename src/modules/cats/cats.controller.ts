@@ -1,3 +1,4 @@
+import { throwError } from 'rxjs';
 import {
   Body,
   Controller,
@@ -13,6 +14,9 @@ import {
   HttpStatus,
   UseGuards,
   UseInterceptors,
+  Inject,
+  Scope,
+  forwardRef,
 } from '@nestjs/common';
 import { CatsService } from './cats.service';
 import { CreateCatDto, UpdateCatDto } from './dto/cats.dto';
@@ -28,15 +32,26 @@ import {
 } from '~/utils/interceptors/index';
 
 import { CustomDecorator } from '~/utils/custom.decorator';
+import { Reflector } from '@nestjs/core';
+
+// import { ValueTest } from '~/common';
 
 @Controller({
   path: 'cats',
+  scope: Scope.REQUEST,
 })
 // @UseFilters(new HttpExceptionFilter()) // 可以把异常过滤器放在这里
 // @UseGuards(RolesGuard, RolesGuard) // 支持多个
 // @UseInterceptors(LoggingInterceptor) // 支持多个
 export class CatsController {
-  constructor(private readonly catsService: CatsService) {}
+  constructor(
+    @Inject(forwardRef(() => CatsService))
+    private readonly catsService: CatsService,
+
+    @Inject('ValueTest') private readonly valueTest: string,
+
+    private reflector: Reflector,
+  ) {}
 
   @Get()
   // @Redirect('https://www.zhinan.tech', 301)
@@ -49,10 +64,11 @@ export class CatsController {
     TimeoutInterceptor,
   )
   async getAllCats(): Promise<Cat[]> {
+    // console.log('reflector:', this.reflector.get());
     return await new Promise((resolve) => {
       setTimeout(() => {
         resolve(this.catsService.findAllCats());
-      }, 5000);
+      }, 1000);
     });
   }
 

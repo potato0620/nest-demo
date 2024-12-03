@@ -5,7 +5,7 @@ export async function listenRandomPort(
   app: INestApplication,
   path: string,
   prefix: string,
-) {
+): Promise<void> {
   _fs.readFile(path, async (err, data) => {
     if (err) {
       const server = await app.listen(0);

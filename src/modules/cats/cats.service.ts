@@ -4,38 +4,32 @@ import {
   HttpStatus,
   MethodNotAllowedException,
   NotFoundException,
+  Scope,
 } from '@nestjs/common';
 import { CreateCatDto, UpdateCatDto } from './dto/cats.dto';
 import { Cat } from './interface/interface';
+import { ModuleRef } from '@nestjs/core';
 
-@Injectable()
+@Injectable({
+  scope: Scope.DEFAULT, // 指定服务的作用域范围 "DEFAULT" "REQUEST" "TRANSIENT" 详细查看文档
+})
 export class CatsService {
   private cats: Cat[] = [];
 
-  constructor() {
+  constructor(private moduleRef: ModuleRef) {
     this.initCats();
-    console.log('init cat successfully');
   }
 
   private initCats(): void {
-    this.cats = [
-      {
-        id: 0,
-        name: 'Potato',
-        age: 3,
-        breed: 'Maine Coon',
-      },
-      {
-        id: 1,
-        name: 'Tom',
-        age: 2,
-        breed: 'British Shorthair',
-      },
-    ];
+    console.log(
+      'catService: ',
+      this.moduleRef.get('CatsService', { strict: false }),
+    );
   }
 
   public findAllCats(): Cat[] {
     // throw new MethodNotAllowedException();
+
     return this.cats;
   }
 
