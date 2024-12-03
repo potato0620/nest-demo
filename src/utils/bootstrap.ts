@@ -1,24 +1,12 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe, Type } from '@nestjs/common';
 import { json } from 'express';
-import { TestMiddleware } from '~/middleware/test.middelware';
-import { HttpExceptionFilter } from './http-exception.filter';
+import { TestMiddleware } from '~/common/middleware/test.middelware';
+import { HttpExceptionFilter } from '~/common/exceptions/http-exception.filter';
 import { RolesGuard } from '~/common/guards/roles.guard';
-import { LoggingInterceptor } from '~/utils/logging.interceptor';
+import { LoggingInterceptor } from '~/common/interceptors/logging.interceptor';
 import { listenRandomPort } from './random-port';
 import os from 'os';
-
-function getLocalIPAddress(): string {
-  const interfaces = os.networkInterfaces();
-  for (const name of Object.keys(interfaces)) {
-    for (const iface of interfaces[name]!) {
-      if (iface.family === 'IPv4' && !iface.internal) {
-        return iface.address;
-      }
-    }
-  }
-  return 'localhost';
-}
 
 export async function bootstrap(
   AppModule: Type<any>,
@@ -34,10 +22,29 @@ export async function bootstrap(
 
   options.prefix && app.setGlobalPrefix(options.prefix);
 
-  app.use(json({ limit: '100mb' }));
+  injectDependencies(app);
 
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
+  printStartMessage(app, options);
+}
 
+const injectDependencies = (app): void => {
+  app.use(json({ limit: '100mb' })); // 注入json解析器 设置请求体大小
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true })); // 注入验证管道
+};
+
+const getLocalIPAddress = (): string => {
+  const interfaces = os.networkInterfaces();
+  for (const name of Object.keys(interfaces)) {
+    for (const iface of interfaces[name]!) {
+      if (iface.family === 'IPv4' && !iface.internal) {
+        return iface.address;
+      }
+    }
+  }
+  return 'localhost';
+};
+
+const printStartMessage = async (app, options): Promise<void> => {
   const localIP = getLocalIPAddress();
 
   if (options.port) {
@@ -67,4 +74,4 @@ export async function bootstrap(
       options.prefix,
     );
   }
-}
+};
