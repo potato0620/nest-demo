@@ -15,6 +15,5 @@ export function LoginVerify(
   res: Response,
   next: NextFunction,
 ): void {
-  console.log('verify successfully');
   next();
 }

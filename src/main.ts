@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import { AppModule } from './app.module';
-import { bootstrap } from './utils/bootstrap';
+import { bootstrap } from './bootstrap';
 
 bootstrap(AppModule, {
   name: 'potato-server',

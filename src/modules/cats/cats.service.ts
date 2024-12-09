@@ -1,3 +1,4 @@
+import { PartialType } from '@nestjs/mapped-types';
 import {
   HttpException,
   Injectable,
@@ -5,6 +6,7 @@ import {
   MethodNotAllowedException,
   NotFoundException,
   Scope,
+  OnModuleInit,
 } from '@nestjs/common';
 import { CreateCatDto, UpdateCatDto } from './dto/cats.dto';
 import { Cat } from './interfaces/cat.interface';
@@ -13,25 +15,29 @@ import { ModuleRef } from '@nestjs/core';
 @Injectable({
   scope: Scope.DEFAULT, // 指定服务的作用域范围 "DEFAULT" "REQUEST" "TRANSIENT" 详细查看文档
 })
-export class CatsService {
+export class CatsService implements OnModuleInit {
   private cats: Cat[] = [];
 
-  constructor(private moduleRef: ModuleRef) {
-    this.initCats();
-  }
+  constructor(private moduleRef: ModuleRef) {}
 
-  private initCats(): void {
-    console.log('catService: ');
+  public onModuleInit(): void {
+    const mockCats = Array.from({ length: 50 }, (_, index) => {
+      return {
+        id: index,
+        name: `猫咪-${index}`,
+        age: index,
+        breed: `猫咪品种-${index}`,
+      };
+    });
+    this.cats = mockCats;
   }
 
   public findAllCats(): Cat[] {
-    // throw new MethodNotAllowedException();
-
     return this.cats;
   }
 
-  public findCatById(id: number): Cat | Record<string, never> {
-    return this.cats.filter((cat) => cat.id === id)[0] || {};
+  public findCatById(ids: number[]): Cat[] {
+    return this.cats.filter((cat) => ids.includes(cat.id)) || [];
   }
 
   public create(payload: CreateCatDto): Cat {

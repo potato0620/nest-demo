@@ -17,11 +17,17 @@ import {
   Inject,
   Scope,
   forwardRef,
+  ParseArrayPipe,
+  Query,
+  HttpException,
+  ClassSerializerInterceptor,
+  SerializeOptions,
+  Version,
 } from '@nestjs/common';
 import { CatsService } from './cats.service';
 import { CreateCatDto, UpdateCatDto } from './dto/cats.dto';
 import { Cat } from './interfaces/cat.interface';
-import { HttpExceptionFilter } from '~/utils/http-exception.filter';
+import { HttpExceptionFilter } from '~/common/exceptions/http-exception.filter';
 import { ValidationPipe } from '~/common/pipes/validation.pipe';
 import { RolesGuard } from '~/common/guards/roles.guard';
 import {
@@ -33,16 +39,20 @@ import {
 
 import { CustomDecorator } from '~/common/decorators/custom.decorator';
 import { Reflector } from '@nestjs/core';
+import { CatEntity } from './cats.entity';
+import { SkipThrottle, Throttle } from '@nestjs/throttler';
 
 // import { ValueTest } from '~/common';
 
 @Controller({
   path: 'cats',
   scope: Scope.REQUEST,
+  // version: '1',
 })
 // @UseFilters(new HttpExceptionFilter()) // 可以把异常过滤器放在这里
 // @UseGuards(RolesGuard, RolesGuard) // 支持多个
 // @UseInterceptors(LoggingInterceptor) // 支持多个
+// @SkipThrottle() // 关闭此控制器的节流
 export class CatsController {
   constructor(
     @Inject(forwardRef(() => CatsService))
@@ -54,6 +64,39 @@ export class CatsController {
   ) {}
 
   @Get()
+  // @SkipThrottle() // 关闭此路由的节流
+  @Throttle({ default: { ttl: 1000 * 10, limit: 50 } }) // 覆盖全局节流配置
+  @UseInterceptors(ClassSerializerInterceptor)
+  @SerializeOptions({
+    type: CatEntity, //自动转换为CatEntity实例，并应用相关的装饰器
+  })
+  getCats(
+    @Query(
+      'ids',
+      new ParseArrayPipe({
+        items: Number,
+        separator: ',',
+        exceptionFactory: (): void => {
+          // 自定义异常
+          throw new HttpException('id必须为number', HttpStatus.BAD_REQUEST);
+        },
+      }),
+    )
+    ids: number[],
+  ): Cat[] {
+    return this.catsService.findCatById(ids);
+
+    return [
+      {
+        id: 1,
+        name: '小黑',
+        age: 3,
+        breed: '英短',
+      },
+    ];
+  }
+
+  @Get('/all')
   // @Redirect('https://www.zhinan.tech', 301)
   // @UseFilters(new HttpExceptionFilter()) // 也可以放这
   // @UseGuards(RolesGuard, RolesGuard) // 支持多个
@@ -64,28 +107,11 @@ export class CatsController {
     TimeoutInterceptor,
   )
   async getAllCats(): Promise<Cat[]> {
-    // console.log('reflector:', this.reflector.get());
     return await new Promise((resolve) => {
       setTimeout(() => {
         resolve(this.catsService.findAllCats());
-      }, 1000);
+      }, 0); // 演示可以异步
     });
-  }
-
-  @Get(':id')
-  getOneCat(
-    // @Param(
-    //   'id',
-    //   new ParseIntPipe({
-    //     // 可以自定义状态码
-    //     errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE,
-    //   }),
-    // )
-    @CustomDecorator('id')
-    id: number,
-  ): Cat | Record<string, never> {
-    return this.catsService.findCatById(id);
-    // throw new NotFoundException('error');
   }
 
   @Post()

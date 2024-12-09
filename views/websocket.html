@@ -1,0 +1,59 @@
+<html>
+
+<head>
+  <script src="https://cdn.socket.io/4.3.2/socket.io.min.js"
+    integrity="sha384-KAZ4DtjNhLChOB/hxXuKqhMLYvx3b5MlT55xPEiNmREKRzeEm+RVPlTnAn0ajQNs"
+    crossorigin="anonymous"></script>
+  <script>
+    const socket = io('http://localhost:9999/messages', {
+      auth: {
+        token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IjExMjE1OTIyMzlAcXEuY29tIiwicGFzc3dvcmQiOiIxMjM0NTYiLCJpYXQiOjE3MzM3MzcxOTksImV4cCI6MTczMzgyMzU5OX0.ikye61vvfm_xj8xi_DCEf2O9XEXuo11r4dn63qltTuk"
+      },
+    });
+    socket.on('connect', function () {
+      console.log('Connected');
+    });
+
+    socket.on('potato', function (data) {
+      console.log('potato:', data);
+    });
+
+    socket.on('tomato', function (data) {
+      console.log('tomato:', data);
+    });
+
+    socket.on('disconnect', function () {
+      console.log('服务器断开连接');
+    });
+
+    socket.on('error', function (err) {
+      console.log('error:', err);
+    });
+
+    // 添加发送消息的函数
+    // function sendPotato() {
+    //   socket.emit('potato', 'Hello from client - potato');
+    // }
+
+    // sendPotato()
+
+    // function sendTomato() {
+    //   socket.emit('tomato', 123);
+    // }
+
+    // sendTomato()
+
+    // setTimeout(() => {
+    //   socket.close();
+    //   console.log('关闭连接');
+    // }, 5000);
+
+
+  </script>
+</head>
+
+<body>
+  123
+</body>
+
+</html>
