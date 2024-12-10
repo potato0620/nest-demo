@@ -85,7 +85,6 @@ function getLocalIPAddress(): string {
 function swaggerConfig(app, options): void {
   const config = new DocumentBuilder()
     .setTitle('potato API')
-    .setBasePath(`${options.prefix ? `/${options.prefix}` : ''}/docs`)
     .setDescription('好，这就是接口文档')
     .setContact('potato', 'https://github.com/zhaojinzhi', '1121592239@qq.com')
     .setVersion('1.0')
