@@ -29,12 +29,14 @@ class RolesGuard implements CanActivate {
     }
 
     const { authorization } = context.switchToHttp().getRequest().headers;
+    const token = authorization ? authorization.replace(/^Bearer /, '') : '';
+
     if (!authorization) {
       throw new HttpException('登陆失效 请重新登陆', HttpStatus.UNAUTHORIZED);
     }
 
     try {
-      const payload = await this.jwtService.verifyAsync(authorization);
+      const payload = await this.jwtService.verifyAsync(token);
     } catch (error) {
       this.logger.error(error);
       throw new HttpException('登陆失效 请重新登陆', HttpStatus.UNAUTHORIZED);

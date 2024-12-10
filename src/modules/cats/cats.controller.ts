@@ -41,9 +41,12 @@ import { CustomDecorator } from '~/common/decorators/custom.decorator';
 import { Reflector } from '@nestjs/core';
 import { CatEntity } from './cats.entity';
 import { SkipThrottle, Throttle } from '@nestjs/throttler';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 
 // import { ValueTest } from '~/common';
 
+@ApiTags('猫咪')
+@ApiBearerAuth()
 @Controller({
   path: 'cats',
   scope: Scope.REQUEST,

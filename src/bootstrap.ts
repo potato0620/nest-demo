@@ -48,7 +48,10 @@ export async function bootstrap(
 }
 
 async function injectDependencies(app): Promise<void> {
-  app.enableCors({ origin: ['http://localhost:5656'], credentials: true }); // 开启跨域 仅限制定域名
+  app.enableCors({
+    origin: ['http://localhost:5656', 'http://zhinan.tech'], // 开启跨域 仅限制定域名
+    credentials: true,
+  });
 
   app.use(compression()); // 开启压缩 gzip
   app.use(json({ limit: '100mb' })); // 注入json解析器 设置请求体大小
@@ -82,14 +85,23 @@ function getLocalIPAddress(): string {
 function swaggerConfig(app, options): void {
   const config = new DocumentBuilder()
     .setTitle('potato API')
+    .setBasePath(`${options.prefix ? `/${options.prefix}` : ''}/docs`)
     .setDescription('好，这就是接口文档')
+    .setContact('potato', 'https://github.com/zhaojinzhi', '1121592239@qq.com')
     .setVersion('1.0')
-    .addBearerAuth()
+    .addBearerAuth({
+      type: 'http',
+      description: '调取登陆接口获取token后填入，通过认证以调用以下接口',
+    })
     .build();
   const documentFactory = (): OpenAPIObject =>
     SwaggerModule.createDocument(app, config);
 
-  const customOptions: SwaggerCustomOptions = {};
+  const customOptions: SwaggerCustomOptions = {
+    customSiteTitle: 'potato API',
+    raw: true,
+    url: '/docs-json',
+  };
 
   SwaggerModule.setup(
     options.prefix ? `${options.prefix}/docs` : 'docs',

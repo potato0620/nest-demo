@@ -11,7 +11,7 @@ class CreateCatDto {
   age: number;
 
   @IsNotEmpty({ message: 'breed is required' })
-  breed: string;
+  breed?: string;
 }
 
 // class UpateCreateDto extends PartialType(CreateCatDto) {}  // 转为全部可选

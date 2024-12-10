@@ -34,7 +34,16 @@ import {
 } from '@nestjs/platform-express';
 import { interval, map, Observable } from 'rxjs';
 import { Public } from '~/common/decorators/public.decorators';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiTags,
+  ApiConsumes,
+} from '@nestjs/swagger';
 
+@ApiTags('土豆')
+@ApiBearerAuth()
 @Controller('potato')
 export class PotatoController {
   private readonly logger = new Logger(PotatoController.name);
@@ -59,13 +68,24 @@ export class PotatoController {
     // });
   }
 
-  /**
-   * 上传文件单个
-   * @param file
-   * @returns
-   */
   @Post('/upLoad')
   @UseInterceptors(FileInterceptor('file'))
+  @ApiOperation({
+    summary: '上传文件单个',
+    description: '这里上传文件',
+  })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
   upload(
     @UploadedFile(
       new ParseFilePipe({
@@ -82,6 +102,10 @@ export class PotatoController {
   }
 
   @Post('/uploadFiles')
+  @ApiOperation({
+    summary: '上传文件多个',
+    description: '这里上传文件',
+  })
   @UseInterceptors(FilesInterceptor('files', 10))
   uploadFiles(
     @UploadedFiles(
