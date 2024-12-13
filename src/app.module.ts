@@ -9,7 +9,11 @@ import { APP_GUARD } from '@nestjs/core';
 import { CatsModule } from '~/modules/cats/cats.module';
 import { PotatoModule } from '~/modules/potato/potato.module';
 import { TasksModule } from '~/tasks/tasks.module';
-import { LoginVerify, TestMiddleware } from '~/common/middleware';
+import {
+  LoginVerify,
+  TestMiddleware,
+  ReqIpShowMiddleware,
+} from '~/common/middleware';
 import { RolesGuard } from '~/common/guards/roles.guard';
 import { AuthModule } from '~/modules/auth/auth.module';
 import { UsersModule } from '~/modules/users/users.module';
@@ -50,5 +54,7 @@ export class AppModule implements NestModule {
       method: RequestMethod.ALL,
       version: '1',
     });
+
+    consumer.apply(ReqIpShowMiddleware).forRoutes('*');
   }
 }

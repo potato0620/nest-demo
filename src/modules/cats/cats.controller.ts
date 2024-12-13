@@ -22,7 +22,6 @@ import {
   HttpException,
   ClassSerializerInterceptor,
   SerializeOptions,
-  Version,
 } from '@nestjs/common';
 import { CatsService } from './cats.service';
 import { CreateCatDto, UpdateCatDto } from './dto/cats.dto';
@@ -42,6 +41,7 @@ import { Reflector } from '@nestjs/core';
 import { CatEntity } from './cats.entity';
 import { SkipThrottle, Throttle } from '@nestjs/throttler';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
+import { Request } from 'express';
 
 // import { ValueTest } from '~/common';
 
