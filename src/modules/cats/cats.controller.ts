@@ -1,4 +1,3 @@
-import { throwError } from 'rxjs';
 import {
   Body,
   Controller,

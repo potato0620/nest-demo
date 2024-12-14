@@ -9,7 +9,6 @@ export class ReqIpShowMiddleware implements NestMiddleware {
     this.logger.log(
       `[${req.method}] request form ${ip} path: ${req.originalUrl}`,
     );
-
     next();
   }
 }
