@@ -29,10 +29,10 @@ export class AuthService {
 
     const { userId, username } = user;
 
-    const tokin = await this.jwtService.signAsync({ email, password });
+    const token = await this.jwtService.signAsync({ email, password });
 
     return {
-      token: tokin,
+      token: token,
       user: {
         userId,
         username,
